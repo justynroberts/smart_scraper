@@ -786,29 +786,9 @@ class SmartCrawler:
             self.page_fetcher.cleanup()
     
     
-class ContentExtractor:
-    """Intelligent content extraction from web pages"""
+class BaseContentExtractor:
+    """Base class for content extraction with common utilities"""
     
-    def __init__(self, llm_analyzer=None):
-        self.llm_analyzer = llm_analyzer
-        
-    def _extract_main_content(self, soup: BeautifulSoup) -> str:
-        """Extract the main content area of the page"""
-        # Try common content container selectors
-        content_selectors = [
-            'article', 'main', '[role="main"]',
-            '#content', '#main-content', '.content', '.main-content',
-            '.post-content', '.article-content', '.entry-content'
-        ]
-        
-        for selector in content_selectors:
-            element = soup.select_one(selector)
-            if element:
-                return self._clean_content(element)
-                
-        # Fallback to analyzing content density
-        return self._extract_by_content_density(soup)
-        
     def _clean_content(self, element) -> str:
         """Clean extracted content by removing boilerplate elements"""
         # Remove unwanted elements
@@ -850,8 +830,12 @@ class ContentExtractor:
         # Use block with highest density
         main_block = max(blocks, key=lambda x: x[1])[0]
         return self._clean_content(main_block)
-        
-    def _extract_metadata(self, soup: BeautifulSoup) -> Dict:
+
+
+class MetadataExtractor(BaseContentExtractor):
+    """Handles extraction of page metadata"""
+    
+    def extract_metadata(self, soup: BeautifulSoup) -> Dict:
         """Extract key metadata from the page"""
         metadata = {}
         
@@ -886,8 +870,12 @@ class ContentExtractor:
             metadata['headings'] = headings
             
         return metadata
-        
-    def _extract_navigation(self, soup: BeautifulSoup) -> Dict:
+
+
+class NavigationExtractor(BaseContentExtractor):
+    """Handles extraction of navigation elements"""
+    
+    def extract_navigation(self, soup: BeautifulSoup) -> Dict:
         """Extract navigation elements like menus and links"""
         navigation = {}
         
@@ -920,6 +908,32 @@ class ContentExtractor:
                 navigation['footer'] = footer_text
                 
         return navigation
+
+
+class ContentExtractor(BaseContentExtractor):
+    """Main content extraction coordinator"""
+    
+    def __init__(self, llm_analyzer=None):
+        self.llm_analyzer = llm_analyzer
+        self.metadata_extractor = MetadataExtractor()
+        self.navigation_extractor = NavigationExtractor()
+        
+    def _extract_main_content(self, soup: BeautifulSoup) -> str:
+        """Extract the main content area of the page"""
+        # Try common content container selectors
+        content_selectors = [
+            'article', 'main', '[role="main"]',
+            '#content', '#main-content', '.content', '.main-content',
+            '.post-content', '.article-content', '.entry-content'
+        ]
+        
+        for selector in content_selectors:
+            element = soup.select_one(selector)
+            if element:
+                return self._clean_content(element)
+                
+        # Fallback to analyzing content density
+        return self._extract_by_content_density(soup)
         
     def extract_content(self, soup: BeautifulSoup, html_content: str, url: str, page_analysis: dict = None) -> Optional[Dict]:
         """Extract content intelligently from the page"""
@@ -929,16 +943,16 @@ class ContentExtractor:
             "page_type": page_analysis.get('page_type', 'article') if page_analysis else 'article'
         }
         
-        # Get metadata
-        content.update(self._extract_metadata(soup))
+        # Get metadata using dedicated extractor
+        content.update(self.metadata_extractor.extract_metadata(soup))
         
         # Get main content
         main_content = self._extract_main_content(soup)
         if main_content:
             content['main_content'] = main_content
             
-        # Get navigation elements
-        navigation = self._extract_navigation(soup)
+        # Get navigation elements using dedicated extractor
+        navigation = self.navigation_extractor.extract_navigation(soup)
         content.update(navigation)
         
         # Use LLM analysis if available

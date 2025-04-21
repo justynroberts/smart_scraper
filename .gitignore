@@ -10,6 +10,10 @@ ENV/
 env/
 env.bak/
 venv.bak/
+crawl_output/
+subdomains.txt
+visited_urls.txt
+crawler_config.json
 
 # VS Code settings (optional, if you're using VS Code)
 .vscode/
@@ -96,3 +100,6 @@ cython_debug/
 
 # Windows
 Thumbs.db
+crawl_output/visited_urls.txt
+crawl_output/subdomains.txt
+crawler_config.json

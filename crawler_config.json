@@ -1,6 +1,6 @@
 {
-  "start_url": "www.fintonlabs.com",
-  "max_pages": 1000,
+  "start_url": "https://docs.n8n.io",
+  "max_pages": 1500,
   "max_depth": 3,
   "output_path": "crawl_output",
   "use_selenium": true,
