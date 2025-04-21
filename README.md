@@ -279,7 +279,7 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 
 For questions and support, please open an issue or contact the maintainers:
 - GitHub Issues: [Create an issue](https://github.com/justynroberts/smart-scraper/issues)
-- Email: your.email@example.com
+- Email: justynroberts@gmail.com
 
 ---
 Made with ❤️ by Justyn
