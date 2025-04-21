@@ -1,0 +1,16 @@
+{
+  "start_url": "www.fintonlabs.com",
+  "max_pages": 1000,
+  "max_depth": 3,
+  "output_path": "crawl_output",
+  "use_selenium": true,
+  "stay_on_subdomains": true,
+  "respect_robots": true,
+  "auto_detect_content": true,
+  "extract_all_pages": true,
+  "save_html": false,
+  "delay_range": [
+    1.0,
+    2.0
+  ]
+}

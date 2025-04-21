@@ -1,0 +1,21 @@
+# Core packages
+requests>=2.28.0
+beautifulsoup4>=4.11.0
+selenium>=4.5.0
+webdriver-manager>=3.8.0
+
+# For LLM API calls
+openai>=1.0.0
+
+# URL parsing and manipulation 
+urllib3>=1.26.0
+
+# Optional - for multithreading if needed
+# concurrent-futures>=3.0.0
+
+# Optional - for parsing dates in content
+# python-dateutil>=2.8.0
+
+# Optional - for extracting data from other formats
+# pypdf>=3.0.0
+# openpyxl>=3.0.0
